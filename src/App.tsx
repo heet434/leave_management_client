@@ -1,24 +1,63 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import Student from './components/StudentDashboard';
+import Instructor from './components/InstructorDashboard';
+import Admin from './components/AdminDashboard';
+import { useState } from 'react';
+//import UserProfile from './components/UserProfile';
+import SignIn from './components/SignIn';
 import './App.css';
 
+
+
+
 function App() {
+  // const [user, setUser] = useState({
+  //   username: '',
+  //   password: '',
+  //   role: '',
+  // });
+  // setUser({
+  //   username: UserProfile.getUserName(),
+  //   password: UserProfile.getPassword(),
+  //   role: UserProfile.getRole(),
+  // });
+  var isUserLoggedIn = false;
+  var logUserIn = (function(isTrue: boolean){
+    console.log("User is logged in");
+    isUserLoggedIn = isTrue;
+  })
+  var logUserOut = (function(isFalse: boolean){
+    isUserLoggedIn = isFalse;
+  })
+  var getUserStatus = (function(){
+    return isUserLoggedIn;
+  })
+  var userLoginUtility = {
+    logUserIn: logUserIn,
+    logUserOut: logUserOut,
+    getUserStatus: getUserStatus
+  }
+  type UserLoginUtility = {
+    logUserIn: (isTrue: boolean) => void,
+    logUserOut: (isFalse: boolean) => void,
+    getUserStatus: () => boolean
+  }
+
+  interface UserLoginUtilityProps {
+    userLoginUtility: UserLoginUtility
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          <Route path="/" element = {<SignIn userLoginUtility={userLoginUtility}/>}/>
+          <Route path="/student" element = {<Student userLoginUtility={userLoginUtility}/>}/>
+          <Route path="/instructor" element = {<Instructor userLoginUtility={userLoginUtility}/>}/>
+          <Route path="/admin" element = {<Admin userLoginUtility={userLoginUtility}/>}/>
+        </Routes>
+      </Router>
     </div>
   );
 }
