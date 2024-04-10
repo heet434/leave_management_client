@@ -1,6 +1,8 @@
 import React from 'react';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Calendar from './Calendar';
+import dayjs from 'dayjs';
+
 
 interface Leave {
     leave_id: number;
@@ -12,17 +14,26 @@ interface Leave {
     course_code: string;
 }
 
+// interface selectedDate {
+//     selectedDate: dayjs.Dayjs;
+// }
+
 interface ShowLeavesProps {
-    leaves: Leave[];
+    data: {
+        leaves: Leave[][],
+        selectedDate: string
+        changeDate : (date: string) => void
+    }
 }
 
+const ShowLeaves: React.FC<ShowLeavesProps> = ({data}) => {
 
-const ShowLeaves: React.FC<ShowLeavesProps> = ({ leaves }) => {
     //console.log(leaves);
     return (
-        <Paper>
-            <TableContainer>
-                <Table>
+        <>
+        {/* <TableContainer sx={{ width: '100%', height: 'fit-content', position: 'relative'}}>
+                <Table sx={{ width: '100%', height: 'fit-content'}}>
+                    
                     <TableHead>
                         <TableRow>
                             <TableCell>Date</TableCell>
@@ -32,15 +43,15 @@ const ShowLeaves: React.FC<ShowLeavesProps> = ({ leaves }) => {
                     <TableBody>
                         {leaves.map((leave) => (
                             <TableRow key={leave.leave_id}>
-                                <TableCell>{leave.leave_date}</TableCell>
+                                <TableCell>{}</TableCell>
                                 <TableCell>{leave.reason}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-            </TableContainer>
-            {/* <Calendar leaves = {leaves} /> */}
-        </Paper>
+        </TableContainer> */}
+        <Calendar data={data} />
+        </>
     );
 };
 

@@ -8,9 +8,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
@@ -19,19 +17,20 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import axios from 'axios';
 import ViewUser from './ViewUser';
 import { Button } from '@mui/material';
-import { Widgets } from '@mui/icons-material';
-import { Interface } from 'readline';
-
+import Leave from './Leave';
 import ShowLeaves from './ShowLeaves';
-
+import LogoutIcon from '@mui/icons-material/Logout';
+import AddCardIcon from '@mui/icons-material/AddCard';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import BookIcon from '@mui/icons-material/Book';
+import ViewCourses from './ViewCoursesStudent';
 
 function Copyright(props: any) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography variant="body2" color="white" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://github.com/heet434">
         Heet Patel
@@ -44,7 +43,7 @@ function Copyright(props: any) {
 
 const LoadingComponent = () => <div>Loading...</div>;
 
-const drawerWidth: number = 240;
+const drawerWidth: number = 200;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -94,11 +93,59 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+const LeaveComponent = ({studentData, selectedDate, dataChange, setDataChange, handleDateChange}:any) => {
+  return (
+    <div style={{width: '100%'}}>
+        <Paper
+          sx={{
+            position: 'relative',
+            // border: '4px solid #ccc',
+            // padding: '0.5rem',
+            borderRadius: '8px',
+            width: '95%',
+            height: 'fit-content',
+            margin: '0 auto',
+            mb : 1
+        }}
+        >
+            <ShowLeaves data={{leaves : [studentData.leaveData], selectedDate: selectedDate, changeDate : handleDateChange}}/>
+        </Paper>
+        <Paper
+          sx={{
+            position: 'relative',
+            // border: '4px solid #ccc',
+            // padding: '0.5rem',
+            borderRadius: '8px',
+            width: '95%',
+            height: 'fit-content',
+            margin: '0 auto',
+            mb: 1
+        }}
+        >
+          <Leave data={{leaves: studentData.leaveData, selectedDate: selectedDate, dataChange, setDataChange}}/>
+        </Paper>
+      </div> 
+  );
+}
+
+const AttendanceComponent = () => {
+  return (
+    <div>
+      <h1>Attendance</h1>
+    </div>
+  );
+}
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Student({userLoginUtility}: {userLoginUtility: any}) {
 
+// The props passed to Student component are userLoginUtility which contains functions to log the user in and out, 
+// as well as a variable to check if the user is logged in.
+
+export default function Student({userLoginUtility}: {userLoginUtility: any}) {
+    
+  // Setting the interface for studentData
     interface studentData {
         studentData: {
             studentData: {
@@ -132,11 +179,15 @@ export default function Student({userLoginUtility}: {userLoginUtility: any}) {
             alert("User is not logged in, please sign in to continue.");
             navigate('/');
         }
-    }, [])
+    }, []);
+
+    // Data states
+    const [dataChange, setDataChange] = React.useState(false);
     const [studentData, setStudentData] = React.useState<any>(null); // Initialize as null
 
-  // Fetch student data on component mount
-  React.useEffect(() => {
+    const [component, setComponent] = React.useState('leave');
+
+    // Fetch student data
     const fetchData = async () => {
       try {
         const user_id = UserProfile.getUserName();
@@ -144,33 +195,46 @@ export default function Student({userLoginUtility}: {userLoginUtility: any}) {
         setStudentData(response.data);
       } catch (error) {
         console.error('Cannot get Student Data', error);
-        // Handle error, e.g., logging, error reporting, etc.
       }
     };
+    // Fetch student data on component mount
+    React.useEffect(() => {
+      fetchData(); // Fetch data
+    }, []);
 
-    fetchData(); // Fetch data
-  }, []);
+    // Looking for changes in data to update states
+    if(dataChange){
+      fetchData();
+      setDataChange(false);
+    }
 
-  // States
-  const [open, setOpen] = React.useState(true);
-    const toggleDrawer = () => {
-    setOpen(!open);
-    };
-    const [openUser, setOpenUser] = React.useState(false);
+    // Other States
+    const [open, setOpen] = React.useState(true);
+      const toggleDrawer = () => {
+      setOpen(!open);
+      };
+      const [openUser, setOpenUser] = React.useState(false);
 
-  // If data is still loading, render the loading component
-  if (!studentData) {
-    return <LoadingComponent />;
-  }
-  console.log(studentData.studentData.name);
+      const [selectedDate, setSelectedDate] = React.useState("2024-04-02");
+      const handleDateChange = (date: string) => {
+          setSelectedDate(date);
+      }
+
+    // If data is still loading, render the loading component
+    if (!studentData) {
+      return <LoadingComponent />;
+    }
+
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ 
+        display: 'flex'
+      }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: '24px', // keep right padding when drawer closed
+              pr: '20px', // keep right padding when drawer closed
             }}
           >
             <IconButton
@@ -194,16 +258,13 @@ export default function Student({userLoginUtility}: {userLoginUtility: any}) {
             >
                Welcome {studentData.studentData.name}
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
+              borderBottom: '1px solid rgba(0,0,0,0.4)',
+              mb: '10px',
               display: 'flex',
               alignItems: 'left',
               justifyContent: 'flex-end',
@@ -218,12 +279,60 @@ export default function Student({userLoginUtility}: {userLoginUtility: any}) {
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
-          <Divider />
-          {/* <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List> */}
+          <Toolbar
+            sx={{
+              display: 'flex',
+              alignItems: 'left',
+              justifyContent: 'flex-end',
+              px: [1],
+            }}
+          > 
+            <Button style={{ width: '100%', color: 'rgba(0,0,0,0.5)', margin: 'auto'}} onClick= {() => setComponent('leave')}>
+              {open ?<><AddCardIcon/>-Apply Leave</> : <AddCardIcon />}
+            </Button>
+          </Toolbar>
+          {/* <Toolbar
+            sx={{
+              display: 'flex',
+              alignItems: 'left',
+              justifyContent: 'flex-end',
+              px: [1],
+            }}
+          > 
+            <Button style={{ width: '100%', color: 'rgba(0,0,0,0.5)', margin: 'auto'}} onClick={() => setComponent('attendance')}>
+            {open ?<><EventNoteIcon/>-Attendance</> : <EventNoteIcon />}
+            </Button>
+          </Toolbar> */}
+          <Toolbar
+            sx={{
+              display: 'flex',
+              alignItems: 'left',
+              justifyContent: 'flex-end',
+              px: [1],
+            }}
+          > 
+            <Button style={{ width: '100%', color: 'rgba(0,0,0,0.5)'}} onClick= {() => setComponent('course')}>
+              {open ? <><BookIcon/>-View Courses</> : <BookIcon />}
+            </Button>
+          </Toolbar>
+          <IconButton
+            sx={{
+              position: 'absolute',
+              bottom: 10,
+              transform: 'translateX(-50%)',
+              left: '50%',
+              borderRadius: '5%',
+              backgroundColor: 'rgba(255,50,50,0.2)',
+              color: 'black',
+              width: '60%',
+            }}
+            onClick={() => {
+              userLoginUtility.logUserOut();
+              navigate('/');
+            }}
+          >
+            {open ? <><LogoutIcon/>Logout</> : <LogoutIcon />}
+          </IconButton>
         </Drawer>
         <Box
           component="main"
@@ -235,47 +344,23 @@ export default function Student({userLoginUtility}: {userLoginUtility: any}) {
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
+            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
           }}
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-            {openUser ? <ViewUser user = {{userData: studentData.studentData,isOpen: openUser}}/> : null}
-            {!openUser ?
-            <div>
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                    <ShowLeaves leaves={studentData.leaveData}/>
-                  {/* <Chart /> */}
-                </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                    Nice
-                  {/* <Deposits /> */}
-                </Paper>
-            </Grid>
-            <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                    Meet
-                  {/* <Orders /> */}
-                </Paper>
-            </Grid>
-            </div> : null}
+            {openUser ? <ViewUser user = {{userData: studentData.studentData,isOpen: openUser, role: 'student'}}/> : null}
+            {!openUser ?<>
+              {component === 'leave' ?
+              <LeaveComponent studentData={studentData} selectedDate={selectedDate} dataChange={dataChange} setDataChange={setDataChange} handleDateChange={handleDateChange}/>
+              : component==='course'?
+              <ViewCourses courses={studentData.enrollmentData}/>
+                : <AttendanceComponent />
+              }
+            </>: null}
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>

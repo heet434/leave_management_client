@@ -6,6 +6,7 @@ import Admin from './components/AdminDashboard';
 import { useState } from 'react';
 //import UserProfile from './components/UserProfile';
 import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
 import './App.css';
 
 
@@ -28,6 +29,7 @@ function App() {
     isUserLoggedIn = isTrue;
   })
   var logUserOut = (function(isFalse: boolean){
+    console.log("User is logged out");
     isUserLoggedIn = isFalse;
   })
   var getUserStatus = (function(){
@@ -53,6 +55,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element = {<SignIn userLoginUtility={userLoginUtility}/>}/>
+          <Route path="/signup" element = {<SignUp/>}/>
           <Route path="/student" element = {<Student userLoginUtility={userLoginUtility}/>}/>
           <Route path="/instructor" element = {<Instructor userLoginUtility={userLoginUtility}/>}/>
           <Route path="/admin" element = {<Admin userLoginUtility={userLoginUtility}/>}/>

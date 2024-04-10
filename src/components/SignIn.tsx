@@ -20,6 +20,8 @@ import StudentDashboard from './StudentDashboard';
 import InstructorDashboard from './InstructorDashboard';
 import AdminDashboard from './AdminDashboard';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import SignUp from './SignUp';
 import axios from 'axios';
 //const navigate = useNavigate();
 
@@ -86,7 +88,7 @@ export default function SignInSide({userLoginUtility}: {userLoginUtility: any}) 
         UserProfile.setUserName(userDetail.user_id as string);
         UserProfile.setPassword(userDetail.passwd as string);
         UserProfile.setRole(userDetail.role as string);
-  
+        
         // Log the user in and redirect to the Dashboard according to the role
         userLoginUtility.logUserIn(true);
         if (userDetail.role === 'student') {
@@ -162,11 +164,11 @@ export default function SignInSide({userLoginUtility}: {userLoginUtility: any}) 
                   id="role"
                   label="Role"
                   name="role"
-                  defaultValue=""
+                  defaultValue="student"
                 >
                   <MenuItem value="student">Student</MenuItem>
                   <MenuItem value="course instructor">Instructor</MenuItem>
-                  <MenuItem value="admin">Admin</MenuItem>
+                  {/* <MenuItem value="admin">Admin</MenuItem> */}
                 </Select>
               </FormControl>
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
@@ -176,7 +178,7 @@ export default function SignInSide({userLoginUtility}: {userLoginUtility: any}) 
                 {/* <Grid item xs>
                 </Grid> */}
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link component={RouterLink} to={'/signup'} variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

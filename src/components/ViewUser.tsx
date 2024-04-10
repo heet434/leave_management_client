@@ -3,14 +3,9 @@ import Paper from '@mui/material/Paper';
 import { Box, Typography, Avatar } from '@mui/material';
 
 interface User {
-    userData: {
-        roll_no: number;
-        name: string;
-        branch: string;
-        stream: string;
-        joining_year: number;
-    };
+    userData: any;
     isOpen: boolean;
+    role: string;
 }
 
 interface ViewUserProps {
@@ -50,11 +45,19 @@ const ViewUser: React.FC<ViewUserProps> = ({ user }) => {
             >
                 <Avatar sx={{ width: '20vw', height: '20vw', mb: 2 }}>U</Avatar> {/* General user avatar */}
                 <Typography variant="h3">User Details</Typography>
-                <Typography variant="h4">Roll No: <strong>{user.userData.roll_no}</strong></Typography>
-                <Typography variant="h4">Name: <strong>{user.userData.name}</strong></Typography>
-                <Typography variant="h4">Branch: <strong>{user.userData.branch}</strong></Typography>
-                <Typography variant="h4">Stream: <strong>{user.userData.stream}</strong></Typography>
-                <Typography variant="h4">Joining Year: <strong>{user.userData.joining_year}</strong></Typography>
+                {user.role === 'student'?
+                <>
+                    <Typography variant="h4">Roll No: <strong>{user.userData.roll_no}</strong></Typography>
+                    <Typography variant="h4">Name: <strong>{user.userData.name}</strong></Typography>
+                    <Typography variant="h4">Branch: <strong>{user.userData.branch}</strong></Typography>
+                    <Typography variant="h4">Stream: <strong>{user.userData.stream}</strong></Typography>
+                    <Typography variant="h4">Joining Year: <strong>{user.userData.joining_year}</strong></Typography></>
+                :<>
+                    <Typography variant="h4">Registeration No.: <strong>{user.userData.rg_no}</strong></Typography>
+                    <Typography variant="h4">Name: <strong>{user.userData.name}</strong></Typography>
+                    <Typography variant="h4">Department: <strong>{user.userData.dept}</strong></Typography>
+                </>
+                }
             </Box>
         </Paper>
     );

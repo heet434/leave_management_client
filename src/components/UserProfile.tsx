@@ -13,8 +13,8 @@ var UserProfile = (function() {
     var getRole = function() {
       return role;
     };
-    var setRole = function(role: string) {
-      role = role;
+    var setRole = function(Role: string) {
+      role = Role;
     };
     var getPassword = function() {
       return password;
